@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicons/icons8-skull-pulsar-gradient-32.png" type="image/png">
+</head>
+
+<body>
+    <main>
+        <h1>Find Coffee Nearby</h1>
+        <div class="map-container">
+            <form id="coffee-form" class="coffee-form">
+                <div class="coffee-form__location-wrapper">
+                    <label for="coffee-form__starting-location">Starting location:</label>
+                    <input type="text" id="coffee-form__starting-location" name="startingLocation"
+                        placeholder="Enter a starting location" required>
+                    <button type="button" id="coffee-form__use-current-location"
+                        class="coffee-form__location-button">USE MY LOCATION</button>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="coffee-form__max-radius">Max radius (miles):</label>
+                        <input type="number" id="coffee-form__max-radius" name="maxRadius" min="1" value="5" required>
+                    </div>
+                    <div class="switch-container">
+                        <label for="filter-switch" id="switch-label">Remove chains</label>
+                        <button type="button" role="switch" aria-checked="true" id="filter-switch" class="switch"
+                            aria-labelledby="switch-label">
+                            <span class="switch-thumb"></span>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="coffee-form__submit">
+                    <svg class="icon-heart">
+                        <use xlink:href="#pixel-heart"></use>
+                    </svg>
+                    FIND COFFEE
+                    <svg class="icon-heart">
+                        <use xlink:href="#pixel-heart"></use>
+                    </svg>
+                </button>
+            </form>
+            <div id="map"></div>
+        </div>
+        <div class="results-container hidden">
+            <div id="results-summary" class="results-summary">
+                <p class="results-summary__results-count"></p>
+            </div>
+            <div id="results-list">
+            </div>
+            <div class="results-fade"></div>
+            <div class="toggle-results-wrapper"><button class="toggle-results">Expand list view</button></div>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Built with Geoapify + Open Street Map + Leaflet</p>
+        <a href="https://github.com/indiaaeevans/coffee-finder" target="_blank" class="project-link">Source Code</a>
+    </footer>
+    <svg style="display: none;">
+        <symbol id="pixel-heart" viewBox="-283 165.8 273.2 263.5">
+            <g>
+                <path class="heart-path"
+                    d="M-198.9,351.5h35.4v35.4h35.4v-35.4h35.4l0,0v-36.2h35.4v-35.4v-35.4v-35.4h-35.4h-35.4v35.4h-35.4v-35.4h-35.4h-35.4v35.4v35.4v35.4h35.4V351.5" />
+                <rect x="-163.7" y="208.8" width="35.4" height="35.4" />
+                <polygon points="-92.9,173.4 -128.3,173.4 -128.3,208.8 -92.9,208.8 -57.3,208.8 -57.3,173.4" />
+                <polygon
+                    points="-57.3,244.3 -57.3,279.8 -57.3,315.2 -21.9,315.2 -21.9,279.8 -21.9,244.3 -21.9,208.8 -57.3,208.8" />
+                <polygon
+                    points="-270.9,244.3 -270.9,279.8 -270.9,315.2 -234.5,315.2 -234.5,279.8 -234.5,244.3 -234.5,208.8 -270.9,208.8" />
+                <rect x="-92.9" y="315.2" width="35.4" height="35.4" />
+                <polygon
+                    points="-129.1,386.1 -163.7,386.1 -163.7,351.5 -199.1,351.5 -199.1,387 -164.5,387 -164.5,421.6 -129.1,421.6 -129.1,387 -93.7,387 -93.7,351.5 -129.1,351.5" />
+                <rect x="-235.5" y="315.2" width="35.4" height="35.4" />
+                <polygon points="-199.1,173.4 -234.5,173.4 -234.5,208.8 -199.1,208.8 -163.7,208.8 -163.7,173.4" />
+            </g>
+        </symbol>
+    </svg>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+        data-id="indiaevans" data-description="Support me on Buy me a coffee!" data-message="" data-color="#BD5FFF"
+        data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
