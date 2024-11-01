@@ -1,3 +1,21 @@
+import { getAddressFromCoords, getCoordsFromAddress, getNearbyPlaces, milesToMeters, metersToMiles, throttle } from './utils.js';
+
+const DEFAULT_LATITUDE = 35.994034;
+const DEFAULT_LONGITUDE = -78.898621;
+const DEFAULT_ZOOM_LEVEL = 12; // TODO adjust zoom level based on radius
+
+// icons
+const LOCATION_ICON_URL = 'images/icons8-location-48.png';
+const CHAIN_ICON_URL = 'images/icons8-skull-48.png';
+const INDIE_ICON_URL = 'images/icons8-kawaii-coffee-48.png';
+// OSM
+const TILE_LAYER_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const MAP_ATTRIBUTION = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+// state
+let map, circle;
+let resultsLimit = 20; // TODO user input for # of results
+let startingLocationMarker, mapMarkers;
+
 document.addEventListener('DOMContentLoaded', () => {
     // dom elements
     const formEl = document.getElementById('coffee-form');
@@ -9,27 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsContainerEl = document.querySelector('.results-container');
     const filterChainsSwitchEl = document.getElementById('filter-switch');
     const toggleResultsViewEl = document.querySelector('.toggle-results');
-    const resultsFadeEl = document.querySelector('.results-fade');
-    // map settings
-    const ZOOM_LEVEL = 12;
-    const PLACES_API_KEY = 'TODO';
-    const PLACES_API_URL = 'https://api.geoapify.com/v2/places';
-    const PLACES_TAGS = 'categories=commercial.food_and_drink.coffee_and_tea,catering.cafe.coffee_shop,catering.cafe.coffee';
-    const DEFAULT_LATITUDE = 35.994034;
-    const DEFAULT_LONGITUDE = -78.898621;
-    // state
-    let latitude, longitude, map, circle;
-    let resultsLimit = 20; // TODO user input for # of results
-    let mapMarkers;
 
     toggleResultsViewEl.addEventListener('click', function () {
         resultsContainerEl.classList.toggle('expanded');
         if (resultsContainerEl.classList.contains('expanded')) {
             toggleResultsViewEl.textContent = 'Collapse list view';
-            resultsFadeEl.style.display = 'none';
         } else {
             toggleResultsViewEl.textContent = 'Expand list view';
-            resultsFadeEl.style.display = 'block';
         }
     });
 
@@ -46,30 +50,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (resultsContainerEl.scrollHeight > resultsContainerEl.clientHeight) {
             toggleResultsViewEl.style.display = 'block'; // TODO toggle class instead?
-            resultsFadeEl.style.display = 'block';
         } else {
             toggleResultsViewEl.style.display = 'none';
-            resultsFadeEl.style.display = 'none';
         }
     }
 
-    // Run on load and resize
-    // window.addEventListener('load', checkResultsOverflow);
-    window.addEventListener('resize', checkResultsOverflow);
+    window.addEventListener('resize', throttle(checkResultsOverflow, 250));
 
-    function initializeMap(latitude, longitude, ZOOM_LEVEL) {
+    function initializeMap(latitude = DEFAULT_LATITUDE, longitude = DEFAULT_LONGITUDE, zoomLevel = DEFAULT_ZOOM_LEVEL) {
         // create the map w/ current location
         map = L.map('map', {
             zoomControl: false
-        }).setView([latitude || DEFAULT_LATITUDE, longitude || DEFAULT_LONGITUDE], ZOOM_LEVEL);
+        }).setView([latitude, longitude], zoomLevel);
         // add the zoom control to the top right corner
         L.control.zoom({
             position: 'topright'
         }).addTo(map);
         // add map tiles
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer(TILE_LAYER_URL, {
             maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            attribution: MAP_ATTRIBUTION
         }).addTo(map);
         mapMarkers = L.layerGroup([]);
 
@@ -93,21 +93,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     getCurrentLocation().then(({ latitude, longitude }) => {
-        initializeMap(latitude, longitude, ZOOM_LEVEL);
+        initializeMap(latitude, longitude);
     }).catch(console.error);
 
     const locationIcon = L.icon({
-        iconUrl: 'images/icons8-location-48.png',
+        iconUrl: LOCATION_ICON_URL,
         iconSize: [32, 32], // size of the icon in px
         popupAnchor: [0, -16], // coordinates of the point from which the popup should open relative to the iconAnchor
     });
     const chainIcon = L.icon({
-        iconUrl: 'images/icons8-skull-48.png',
+        iconUrl: CHAIN_ICON_URL,
         iconSize: [32, 32], // size of the icon in px
         popupAnchor: [0, -16], // coordinates of the point from which the popup should open relative to the iconAnchor
     });
     const indieIcon = L.icon({
-        iconUrl: 'images/icons8-kawaii-coffee-48.png',
+        iconUrl: INDIE_ICON_URL,
         iconSize: [32, 32], // size of the icon in px
         // iconAnchor:   [10, 10], // coordinates of the "tip" of the icon (relative to its top left corner)
         popupAnchor: [0, -16] // coordinates of the point from which the popup should open relative to the iconAnchor
@@ -175,6 +175,16 @@ document.addEventListener('DOMContentLoaded', () => {
             mapMarkers.addLayer(marker);
         });
         mapMarkers.addTo(map);
+        // adjust the map to fit all the markers
+        let bounds = mapMarkers.getLayers().map((marker) => {
+            return marker.getLatLng();
+        }).map((latlng) => [latlng.lat, latlng.lng ]);
+        // use fitBounds instead for no animation
+        map.flyToBounds(bounds, {
+            padding: [50, 50], // Add padding around markers
+            maxZoom: 15        // Prevent too much zoom
+        });
+
         resultsCountEl.textContent = `Found ${results.length} coffee shop${results.length !== 1 ? 's' : ''}.`;
         resultsListEl.appendChild(ul);
         resultsContainerEl.classList.remove('hidden');
@@ -185,40 +195,45 @@ document.addEventListener('DOMContentLoaded', () => {
         if ("geolocation" in navigator) {
             return new Promise(function (resolve, reject) {
                 navigator.geolocation.getCurrentPosition((position) => {
-                    latitude = position.coords.latitude;
-                    longitude = position.coords.longitude;
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
                     resolve({ latitude, longitude });
-                }, (error) => {
-                    reject("Error getting location: ", error.message);
-                    alert("Unable to retrieve your location. Please enter it manually.");
+                }, (err) => {
+                    console.error(err, 'Geolocation failed...using default location');
+                    // use default values as fallback
+                    resolve({ DEFAULT_LATITUDE, DEFAULT_LONGITUDE })
                 });
             })
         } else {
             alert("Geolocation is not supported by your browser. Please enter your location manually.");
         }
     }
-    useCurrentLocationBtnEl.addEventListener('click', async () => {
-        if (!latitude || !longitude) {
-            await getCurrentLocation().then(({ latitude, longitude }) => {
-                initializeMap(latitude, longitude, ZOOM_LEVEL);
-            }).catch(console.error);
-        }
 
-        startingLocationInputEl.value = `${latitude}, ${longitude}`;
-        // TODO cleanup in case location is pressed multiple times
-        let marker = L.marker([latitude, longitude], { icon: locationIcon }).addTo(map);
-        marker.bindPopup("Current location");
+    useCurrentLocationBtnEl.addEventListener('click', async () => {
+        const { latitude, longitude } = await getCurrentLocation();
+        const address = await getAddressFromCoords(latitude, longitude);
+        startingLocationInputEl.value = address;
+        addStartingLocationMarker(latitude, longitude, address);
     });
 
-    formEl.addEventListener('submit', (e) => {
+    function addStartingLocationMarker(latitude, longitude, address) {
+        if (startingLocationMarker) {
+            startingLocationMarker.removeFrom(map);
+        }
+        startingLocationMarker = L.marker([latitude, longitude], { icon: locationIcon }).addTo(map);
+        startingLocationMarker.bindPopup(address);
+    }
+
+    formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearMap();
-
         const startingLocation = startingLocationInputEl.value;
+        const { latitude, longitude } = await getCoordsFromAddress(startingLocation);
+        addStartingLocationMarker(latitude, longitude); // TODO update map to new location
+
         const maxRadiusMiles = maxRadiusInputEl.value;
         const maxRadiusMeters = milesToMeters(maxRadiusMiles);
         const filterChains = filterChainsSwitchEl.getAttribute('aria-checked') === 'true';
-        // const filterChains = filterChainsInput.checked;
 
         // draw the radius on the map https://leafletjs.com/reference.html#layer
         circle = L.circle([latitude, longitude], {
@@ -228,42 +243,16 @@ document.addEventListener('DOMContentLoaded', () => {
             radius: maxRadiusMeters
         }).addTo(map);
 
-        fetch(`${PLACES_API_URL}?${PLACES_TAGS}&filter=circle:${longitude},${latitude},${maxRadiusMeters}&bias=proximity:${longitude},${latitude}&limit=${resultsLimit}&apiKey=${PLACES_API_KEY}`)
-            .then(response => response.json())
-            .then(result => {
-                let results = result.features;
-                // let filteredOutCount = 0;
+        try {
+            let results = await getNearbyPlaces(longitude, latitude, maxRadiusMeters, resultsLimit);
 
-                results = results.map(feature => {
-                    const isChainLocation = isChain(feature.properties.name);
-                    return {
-                        ...feature,
-                        properties: {
-                            ...feature.properties,
-                            indie: !isChainLocation
-                        }
-                    };
-                });
-
-                if (filterChains) {
-                    const originalCount = results.length;
-                    results = results.filter(feature => feature.properties.indie);
-                    // filteredOutCount = originalCount - results.length;
-                }
-                displayResults(results, maxRadiusMiles);
-            })
-            .catch(error => console.log('error', error));
+            if (filterChains) {
+                results = results.filter(feature => feature.properties.indie);
+            }
+            displayResults(results, maxRadiusMiles);
+        } catch (error) {
+            console.error('Error fetching nearby places:', error);
+        }
     });
 
-    function milesToMeters(miles) {
-        return Math.round(miles * 1609.34);
-    }
-
-    function metersToMiles(meters) {
-        return (meters / 1609.34).toFixed(2);
-    }
-    function isChain(name) {
-        const chains = ['Starbucks', 'Dunkin', 'Costa Coffee', 'Tim Hortons', 'Caribou Coffee'];
-        return chains.some(chain => name.toLowerCase().includes(chain.toLowerCase()));
-    }
 });
