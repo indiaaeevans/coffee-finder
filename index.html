@@ -10,7 +10,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="favicons/icons8-skull-pulsar-gradient-32.png" type="image/png">
+    <link rel="icon" href="images/skull-line.svg" type="image/svg+xml">
+    <!-- TODO light/dark favicons -->
+    <!-- <link rel="icon" href="favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+    <link rel="icon" href="favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)"> -->
 </head>
 
 <body>
@@ -24,18 +27,22 @@
                 <div class="form-row">
                     <!-- <label for="coffee-form__starting-location">Starting location:</label> -->
                     <input type="text" id="coffee-form__starting-location" name="startingLocation"
-                        placeholder="Enter a starting location" required>
+                        placeholder="Starting location" required>
                     <button type="button" class="icon-button" id="coffee-form__use-current-location"
-                        aria-label="Use my location">
-                        <img class="icon" src="images/icons8-location-96.png" aria-hidden="true" width="24" height="24">
+                        aria-label="Use my location" title="Use my location">
+                        <img class="icon" src="images/location.svg" aria-hidden="true">
+                    </button>
+                    <button type="submit" class="icon-button" id="coffee-form__use-current-location"
+                        aria-label="Find coffee" title="Find coffee">
+                        <img class="icon" src="images/search.svg" aria-hidden="true">
                     </button>
                 </div>
                 <div class="form-row">
-                    <div class="form-field">
+                    <div>
                         <label for="coffee-form__max-radius">Max radius (miles)</label>
                         <input type="number" id="coffee-form__max-radius" name="maxRadius" min="1" value="5" required>
                     </div>
-                    <div class="switch-container">
+                    <div>
                         <label for="filter-switch" id="switch-label">Remove chains</label>
                         <button type="button" role="switch" aria-checked="true" id="filter-switch" class="switch"
                             aria-labelledby="switch-label">
@@ -43,7 +50,7 @@
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="coffee-form__submit button--stripe">
+                <!-- <button type="submit" class="coffee-form__submit button--stripe">
                     <svg class="icon-heart">
                         <use xlink:href="#pixel-heart"></use>
                     </svg>
@@ -51,18 +58,20 @@
                     <svg class="icon-heart">
                         <use xlink:href="#pixel-heart"></use>
                     </svg>
-                </button>
+                </button> -->
             </form>
             <div id="map"></div>
         </div>
         <div class="results-container hidden">
-            <div id="results-summary" class="results-summary">
+            <div class="results-summary">
                 <p class="page-title results-summary__page-title">indie maps</p>
                 <p class="results-summary__results-count"></p>
             </div>
             <div id="results-list">
             </div>
-            <div class="toggle-results-wrapper"><button class="toggle-results">Expand list view</button></div>
+            <div class="toggle-results-wrapper hidden">
+                <button class="toggle-results">Expand list view</button>
+            </div>
         </div>
     </main>
     <footer class="footer">
@@ -74,7 +83,7 @@
             find indie coffee near you
         </span>
         <p class="footer__attribution">Built with Geoapify + Open Street Map + Leaflet</p>
-        <a href="https://github.com/indiaaeevans/coffee-finder" target="_blank" class="project-link">Source Code</a> | 
+        <a href="https://github.com/indiaaeevans/coffee-finder" target="_blank" class="project-link">Source Code</a> |
         <a href="https://buymeacoffee.com/indiaevans" target="_blank" class="bmc-link">Buy me a coffee</a>
     </footer>
     <svg style="display: none;">

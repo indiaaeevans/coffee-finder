@@ -5,9 +5,9 @@ const DEFAULT_LONGITUDE = -78.898621;
 const DEFAULT_ZOOM_LEVEL = 12; // TODO adjust zoom level based on radius
 
 // icons
-const LOCATION_ICON_URL = 'images/icons8-location-48.png';
-const CHAIN_ICON_URL = 'images/icons8-skull-48.png';
-const INDIE_ICON_URL = 'images/icons8-kawaii-coffee-48.png';
+const LOCATION_ICON_URL = 'images/location.svg';
+const CHAIN_ICON_URL = 'images/skull-line.svg';
+const INDIE_ICON_URL = 'images/coffee-edit.svg';
 // OSM
 const TILE_LAYER_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const MAP_ATTRIBUTION = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsContainerEl = document.querySelector('.results-container');
     const filterChainsSwitchEl = document.getElementById('filter-switch');
     const toggleResultsViewEl = document.querySelector('.toggle-results');
+    const toggleResultsWrapperEl = document.querySelector('.toggle-results-wrapper');
 
     toggleResultsViewEl.addEventListener('click', function () {
         resultsContainerEl.classList.toggle('expanded');
@@ -49,9 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         if (resultsContainerEl.scrollHeight > resultsContainerEl.clientHeight) {
-            toggleResultsViewEl.style.display = 'block'; // TODO toggle class instead?
+            toggleResultsWrapperEl.style.display = 'block'; // TODO toggle class instead?
         } else {
-            toggleResultsViewEl.style.display = 'none';
+            toggleResultsWrapperEl.style.display = 'none';
         }
     }
 
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).setView([latitude, longitude], zoomLevel);
         // add the zoom control to the top right corner
         L.control.zoom({
-            position: 'topright'
+            position: 'bottomright'
         }).addTo(map);
         // add map tiles
         L.tileLayer(TILE_LAYER_URL, {
@@ -98,12 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const locationIcon = L.icon({
         iconUrl: LOCATION_ICON_URL,
+        mapIconColor: '#cc756b',
         iconSize: [32, 32], // size of the icon in px
         popupAnchor: [0, -16], // coordinates of the point from which the popup should open relative to the iconAnchor
     });
     const chainIcon = L.icon({
         iconUrl: CHAIN_ICON_URL,
-        iconSize: [32, 32], // size of the icon in px
+        iconSize: [28, 28], // size of the icon in px
         popupAnchor: [0, -16], // coordinates of the point from which the popup should open relative to the iconAnchor
     });
     const indieIcon = L.icon({
@@ -178,10 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // adjust the map to fit all the markers
         let bounds = mapMarkers.getLayers().map((marker) => {
             return marker.getLatLng();
-        }).map((latlng) => [latlng.lat, latlng.lng ]);
+        }).map((latlng) => [latlng.lat, latlng.lng]);
         // use fitBounds instead for no animation
         map.flyToBounds(bounds, {
-            padding: [50, 50], // Add padding around markers
+            padding: [50, 50],
             maxZoom: 15        // Prevent too much zoom
         });
 
@@ -214,13 +216,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const address = await getAddressFromCoords(latitude, longitude);
         startingLocationInputEl.value = address;
         addStartingLocationMarker(latitude, longitude, address);
+        // use panTo for less animation
+        map.flyTo([latitude, longitude], DEFAULT_ZOOM_LEVEL);
     });
 
     function addStartingLocationMarker(latitude, longitude, address) {
         if (startingLocationMarker) {
             startingLocationMarker.removeFrom(map);
         }
-        startingLocationMarker = L.marker([latitude, longitude], { icon: locationIcon }).addTo(map);
+        startingLocationMarker = L.marker([latitude, longitude],
+            {
+                icon: locationIcon,
+                // draggable: true // TODO https://leafletjs.com/reference.html#marker-draggable
+            }
+        ).addTo(map);
         startingLocationMarker.bindPopup(address);
     }
 
@@ -228,8 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         clearMap();
         const startingLocation = startingLocationInputEl.value;
-        const { latitude, longitude } = await getCoordsFromAddress(startingLocation);
-        addStartingLocationMarker(latitude, longitude); // TODO update map to new location
+        const { latitude, longitude, address } = await getCoordsFromAddress(startingLocation);
+        addStartingLocationMarker(latitude, longitude, address); // TODO update map to new location
 
         const maxRadiusMiles = maxRadiusInputEl.value;
         const maxRadiusMeters = milesToMeters(maxRadiusMiles);

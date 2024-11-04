@@ -6,7 +6,7 @@ const CHAINS = [
     'Caribou Coffee'
 ];
 // map settings
-export const PLACES_API_KEY = '';
+export const PLACES_API_KEY = 'TODO';
 export const PLACES_API_URL = 'https://api.geoapify.com/v2/places';
 export const REVERSE_GEOCODE_API_URL = 'https://api.geoapify.com/v1/geocode/reverse';
 export const FORWARD_GEOCODE_API_URL = 'https://api.geoapify.com/v1/geocode/search';
@@ -40,7 +40,7 @@ export const getCoordsFromAddress = async (address) => {
     return fetch(`${FORWARD_GEOCODE_API_URL}?text=${address}&filter=countrycode:us&bias=countrycode:us&format=json&apiKey=${PLACES_API_KEY}`)
         .then(response => response.json())
         .then(response => {
-            return { latitude: response.results[0].lat, longitude: response.results[0].lon }
+            return { latitude: response.results[0].lat, longitude: response.results[0].lon, address: response.results[0].address_line1 };
         });
 }
 
