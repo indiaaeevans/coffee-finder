@@ -6,8 +6,8 @@ const DEFAULT_ZOOM_LEVEL = 12; // TODO adjust zoom level based on radius
 
 // icons
 const LOCATION_ICON_URL = 'images/location.svg';
-const CHAIN_ICON_URL = 'images/skull-line.svg';
-const INDIE_ICON_URL = 'images/coffee-edit.svg';
+const CHAIN_ICON_URL = 'images/skull.svg';
+const INDIE_ICON_URL = 'images/coffee.svg';
 // OSM
 const TILE_LAYER_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const MAP_ATTRIBUTION = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
