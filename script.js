@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterChainsSwitchEl = document.getElementById('filter-switch');
     const toggleResultsViewEl = document.querySelector('.toggle-results');
     const toggleResultsWrapperEl = document.querySelector('.toggle-results-wrapper');
+    const locationErrorMsgEl = document.getElementById('coffee-form__starting-location-err');
+    const loadingEl = document.querySelector('.loading-wrapper');
 
     toggleResultsViewEl.addEventListener('click', function () {
         resultsContainerEl.classList.toggle('expanded');
@@ -55,7 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleResultsWrapperEl.style.display = 'none';
         }
     }
+    function showLoading() {
+        loadingEl.classList.remove('hidden');
+    }
 
+    function hideLoading() {
+        loadingEl.classList.add('hidden');
+    }
+    function hideFormErrorMsg() {
+        locationErrorMsgEl.textContent = '';
+        locationErrorMsgEl.classList.add('hidden');
+    }
     window.addEventListener('resize', throttle(checkResultsOverflow, 250));
 
     function initializeMap(latitude = DEFAULT_LATITUDE, longitude = DEFAULT_LONGITUDE, zoomLevel = DEFAULT_ZOOM_LEVEL) {
@@ -93,9 +105,18 @@ document.addEventListener('DOMContentLoaded', () => {
         L.control.customControl({ position: 'topleft' }).addTo(map);
     }
 
-    getCurrentLocation().then(({ latitude, longitude }) => {
-        initializeMap(latitude, longitude);
-    }).catch(console.error);
+    const initializeMapWithCurrentLocation = async () => {
+        try {
+            const { latitude, longitude } = await getCurrentLocation();
+            initializeMap(latitude, longitude);
+        } catch (error) {
+            console.error('Failed to get current location: ', error);
+            console.info('Setting map to default location.');
+            initializeMap();
+        }
+    };
+
+    initializeMapWithCurrentLocation();
 
     const locationIcon = L.icon({
         iconUrl: LOCATION_ICON_URL,
@@ -194,30 +215,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function getCurrentLocation() {
-        if ("geolocation" in navigator) {
-            return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
+            if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition((position) => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     resolve({ latitude, longitude });
                 }, (err) => {
-                    console.error(err, 'Geolocation failed...using default location');
-                    // use default values as fallback
-                    resolve({ DEFAULT_LATITUDE, DEFAULT_LONGITUDE })
+                    console.error(err);
+                    reject('Geolocation permissions may be turned off...');
                 });
-            })
-        } else {
-            alert("Geolocation is not supported by your browser. Please enter your location manually.");
-        }
+            } else {
+                reject('Geolocation is not supported by your browser.');
+            }
+        })
     }
 
     useCurrentLocationBtnEl.addEventListener('click', async () => {
-        const { latitude, longitude } = await getCurrentLocation();
-        const address = await getAddressFromCoords(latitude, longitude);
-        startingLocationInputEl.value = address;
-        addStartingLocationMarker(latitude, longitude, address);
-        // use panTo for less animation
-        map.flyTo([latitude, longitude], DEFAULT_ZOOM_LEVEL);
+        try {
+            hideFormErrorMsg();
+            const { latitude, longitude } = await getCurrentLocation();
+            const address = await getAddressFromCoords(latitude, longitude);
+            startingLocationInputEl.value = address;
+            addStartingLocationMarker(latitude, longitude, address);
+            // use panTo for less animation
+            map.flyTo([latitude, longitude], DEFAULT_ZOOM_LEVEL);
+        } catch (error) {
+            console.error('Failed to get current location: ', error);
+            locationErrorMsgEl.textContent = 'Failed to get current location. Please try again with location services enabled.';
+            locationErrorMsgEl.classList.remove('hidden');
+        }
     });
 
     function addStartingLocationMarker(latitude, longitude, address) {
@@ -236,8 +263,22 @@ document.addEventListener('DOMContentLoaded', () => {
     formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearMap();
+        showLoading();
+
         const startingLocation = startingLocationInputEl.value;
-        const { latitude, longitude, address } = await getCoordsFromAddress(startingLocation);
+        let locationData;
+        try {
+            locationData = await getCoordsFromAddress(startingLocation);
+        } catch (error) {
+            console.error('Error fetching coordinates:', error);
+            locationErrorMsgEl.textContent = 'Failed to locate your address. Please try again.';
+            locationErrorMsgEl.classList.remove('hidden');
+            hideLoading();
+            return;
+        }
+        hideFormErrorMsg();
+        const { latitude, longitude, address } = locationData;
+        // Continue with the rest of the code using latitude, longitude, and address
         addStartingLocationMarker(latitude, longitude, address); // TODO update map to new location
 
         const maxRadiusMiles = maxRadiusInputEl.value;
@@ -260,7 +301,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             displayResults(results, maxRadiusMiles);
         } catch (error) {
+            // TODO show error msg on the page
             console.error('Error fetching nearby places:', error);
+        } finally {
+            hideLoading();
         }
     });
 

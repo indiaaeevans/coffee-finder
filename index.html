@@ -25,15 +25,13 @@
         <div class="map-container">
             <form id="coffee-form" class="coffee-form">
                 <div class="form-row">
-                    <!-- <label for="coffee-form__starting-location">Starting location:</label> -->
                     <input type="text" id="coffee-form__starting-location" name="startingLocation"
                         placeholder="Starting location" required>
                     <button type="button" class="icon-button" id="coffee-form__use-current-location"
                         aria-label="Use my location" title="Use my location">
                         <img class="icon" src="images/location.svg" aria-hidden="true">
                     </button>
-                    <button type="submit" class="icon-button" id="coffee-form__use-current-location"
-                        aria-label="Find coffee" title="Find coffee">
+                    <button type="submit" class="icon-button" aria-label="Find coffee">
                         <img class="icon" src="images/search.svg" aria-hidden="true">
                     </button>
                 </div>
@@ -50,16 +48,11 @@
                         </button>
                     </div>
                 </div>
-                <!-- <button type="submit" class="coffee-form__submit button--stripe">
-                    <svg class="icon-heart">
-                        <use xlink:href="#pixel-heart"></use>
-                    </svg>
-                    Find coffee
-                    <svg class="icon-heart">
-                        <use xlink:href="#pixel-heart"></use>
-                    </svg>
-                </button> -->
+                <div class="hidden" id="coffee-form__starting-location-err"></div>
             </form>
+            <div class="loading-wrapper hidden">
+                <img class="loading-img tada" src="images/animated-coffee.svg" aria-hidden="true">
+            </div>
             <div id="map"></div>
         </div>
         <div class="results-container hidden">
@@ -76,35 +69,14 @@
     </main>
     <footer class="footer">
         <span class="footer__page-heading">
-            <span class="page-title footer__page-title">indie maps</span>
-            <svg class="icon-heart">
-                <use xlink:href="#pixel-heart"></use>
-            </svg>
+            <span class="footer__page-title">indie maps</span>
+            <img class="footer__logo" src="images/skull.svg" aria-hidden="true">
             find indie coffee near you
         </span>
         <p class="footer__attribution">Built with Geoapify + Open Street Map + Leaflet</p>
         <a href="https://github.com/indiaaeevans/coffee-finder" target="_blank" class="project-link">Source Code</a> |
         <a href="https://buymeacoffee.com/indiaevans" target="_blank" class="bmc-link">Buy me a coffee</a>
     </footer>
-    <svg style="display: none;">
-        <symbol id="pixel-heart" viewBox="-283 165.8 273.2 263.5">
-            <g>
-                <path class="heart-path"
-                    d="M-198.9,351.5h35.4v35.4h35.4v-35.4h35.4l0,0v-36.2h35.4v-35.4v-35.4v-35.4h-35.4h-35.4v35.4h-35.4v-35.4h-35.4h-35.4v35.4v35.4v35.4h35.4V351.5" />
-                <rect x="-163.7" y="208.8" width="35.4" height="35.4" />
-                <polygon points="-92.9,173.4 -128.3,173.4 -128.3,208.8 -92.9,208.8 -57.3,208.8 -57.3,173.4" />
-                <polygon
-                    points="-57.3,244.3 -57.3,279.8 -57.3,315.2 -21.9,315.2 -21.9,279.8 -21.9,244.3 -21.9,208.8 -57.3,208.8" />
-                <polygon
-                    points="-270.9,244.3 -270.9,279.8 -270.9,315.2 -234.5,315.2 -234.5,279.8 -234.5,244.3 -234.5,208.8 -270.9,208.8" />
-                <rect x="-92.9" y="315.2" width="35.4" height="35.4" />
-                <polygon
-                    points="-129.1,386.1 -163.7,386.1 -163.7,351.5 -199.1,351.5 -199.1,387 -164.5,387 -164.5,421.6 -129.1,421.6 -129.1,387 -93.7,387 -93.7,351.5 -129.1,351.5" />
-                <rect x="-235.5" y="315.2" width="35.4" height="35.4" />
-                <polygon points="-199.1,173.4 -234.5,173.4 -234.5,208.8 -199.1,208.8 -163.7,208.8 -163.7,173.4" />
-            </g>
-        </symbol>
-    </svg>
     <script type="module" src="./script.js"></script>
 </body>
 

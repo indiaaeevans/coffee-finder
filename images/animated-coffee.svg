@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768">
+    <!-- Steam paths with animation -->
+    <path fill="rgb(232, 190, 201)" d="M 233 15 C 248 11 263 19 267 34 L 281 87 C 285 102 276 117 262 121 C 247 124 232 116 228 101 L 214 48 C 210 33 219 18 233 15 Z">
+      <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
+      <animate attributeName="transform" values="translate(0,0); translate(0,-10); translate(0,0)" dur="2s" repeatCount="indefinite" />
+    </path>
+    
+    <path fill="rgb(232, 190, 201)" d="M 370 15 C 385 11 400 19 404 34 L 418 87 C 422 102 413 117 399 121 C 384 124 369 116 365 101 L 351 48 C 347 33 356 18 370 15 Z">
+      <animate attributeName="opacity" values="1;0.3;1" dur="2s" begin="0.6s" repeatCount="indefinite" />
+      <animate attributeName="transform" values="translate(0,0); translate(0,-10); translate(0,0)" dur="2s" begin="0.6s" repeatCount="indefinite" />
+    </path>
+    
+    <path fill="rgb(232, 190, 201)" d="M 507 15 C 522 11 537 19 541 34 L 555 87 C 559 102 550 117 536 121 C 521 124 506 116 502 101 L 488 48 C 484 33 493 18 507 15 Z">
+      <animate attributeName="opacity" values="1;0.3;1" dur="2s" begin="1.2s" repeatCount="indefinite" />
+      <animate attributeName="transform" values="translate(0,0); translate(0,-10); translate(0,0)" dur="2s" begin="1.2s" repeatCount="indefinite" />
+    </path>
+  
+    <!-- Rest of the coffee cup -->
+    <path d="M 576 204.5 L 192 204.5 L 170 255 L 598 255 Z" style="fill: rgb(232, 190, 201);" />
+    <path d="M 97.707 300.413 H 676.742 V 363.254 H 97.707 V 300.413 Z" style="fill: rgb(156, 60, 124);" />
+    <path d="M 589.466 403.077 C 589.531 402.36 589.578 401.667 589.606 401 L 175.335 401 C 175.357 401.667 175.401 402.36 175.466 403.077 L 179.582 440 L 585.777 440 Z" style="fill: rgb(232, 190, 201);" />
+    <path d="M 196.304 590 L 570.792 590 L 579.683 501 L 186.383 501 Z" style="fill: rgb(156, 60, 124);" />
+    <path d="M 242 702 L 526 702 C 545 702 561 687 563 668 L 564.798 650 L 202.993 650 L 205 668 C 207 687 223 702 242 702 Z" style="fill: rgb(232, 191, 201);" />
+    <path fill="#32131d" d="M 195 590 L 574 590 L 574 650 L 195 650 L 195 590 Z M 174 440 L 596 440 L 596 501 L 174 501 L 174 440 Z M 682 310 L 86 310 L 141 183 C 150 162.8 170 150 192 150 L 576 150 C 598 150 618 162.8 627 183 L 682 310 Z M 170 255 L 598 255 L 576 204.5 L 192 204.5 L 170 255 Z M 546 748 L 222 748 C 191 747 166 718 163 689 L 118 369 C 115 347 653 347 650 369 L 605 689 C 602 718 577 748 546 748 Z M 242 702 L 526 702 C 545 702 561 687 563 668 L 589.466 403.077 C 591.466 381.077 576 383 553 383 L 215 383 C 192 383 173.466 381.077 175.466 403.077 L 205 668 C 207 687 223 702 242 702 Z M 641 401 L 128 401 C 88 401 56 368 56 328 C 56 288 88 255 128 255 L 641 255 C 681 255 713 288 713 328 C 713 368 681 401 641 401 Z M 128 310 C 119 310 111 318 111 328 C 111 338 119 346 128 346 L 641 346 C 651 346 659 338 659 328 C 659 318 651 310 641 310 L 128 310 Z" />
+  </svg>
