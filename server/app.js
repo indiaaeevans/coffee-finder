@@ -34,7 +34,7 @@ app.context.services = {
 app
   .use(cors({
     origin: process.env.NODE_ENV === 'production'
-      ? ['https://coffee-finder-api.onrender.com']
+      ? ['https://indiemaps.netlify.app/'] // TODO add client domain
       : '*',
     credentials: true
   }))
