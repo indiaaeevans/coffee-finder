@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap'); */
 
 :root {
     --color-imperial-red: #ED4A49;
@@ -82,8 +83,8 @@ p {
 
 .page-heading {
     position: absolute;
-    right: 60px;
-    top: 10px;
+    right: 16px;
+    top: 16px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -92,10 +93,8 @@ p {
 
 .page-title,
 .page-description {
-    background: var(--color-imperial-red);
-    width: fit-content;
-    padding: 0 4px;
-    color: var(--color-burgundy);
+    text-shadow: 1px 1px 0 var(--color-burgundy);
+    color: var(--color-imperial-red);
 }
 
 .footer__page-heading {
@@ -484,3 +483,19 @@ input[type="number"] {
     animation-name: tada;
     animation-duration: 2s;
 }
+
+@keyframes slideOutLeft {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+  
+    to {
+      visibility: hidden;
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+  
+  .slideOutLeft {
+    animation-name: slideOutLeft;
+    animation-duration: 1s;
+  }

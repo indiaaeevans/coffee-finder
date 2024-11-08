@@ -107,12 +107,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const initializeMapWithCurrentLocation = async () => {
         try {
+            showLoading();
             const { latitude, longitude } = await getCurrentLocation();
             initializeMap(latitude, longitude);
         } catch (error) {
             console.error('Failed to get current location: ', error);
             console.info('Setting map to default location.');
             initializeMap();
+        } finally {
+            hideLoading();
         }
     };
 

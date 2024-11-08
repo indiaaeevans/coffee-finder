@@ -6,11 +6,9 @@ const CHAINS = [
     'Caribou Coffee'
 ];
 // map settings
-export const PLACES_API_KEY = 'TODO';
-export const PLACES_API_URL = 'https://api.geoapify.com/v2/places';
-export const REVERSE_GEOCODE_API_URL = 'https://api.geoapify.com/v1/geocode/reverse';
-export const FORWARD_GEOCODE_API_URL = 'https://api.geoapify.com/v1/geocode/search';
-const PLACES_TAGS = 'categories=commercial.food_and_drink.coffee_and_tea,catering.cafe.coffee_shop,catering.cafe.coffee';
+export const PLACES_API_URL = 'http://localhost:4000/api/v1/geo/places';
+export const REVERSE_GEOCODE_API_URL = 'http://localhost:4000/api/v1/geo/reverse';
+export const FORWARD_GEOCODE_API_URL = 'http://localhost:4000/api/v1/geo/forward';
 
 export const milesToMeters = (miles) => Math.round(miles * 1609.34);
 export const metersToMiles = (meters) => (meters / 1609.34).toFixed(2);
@@ -31,7 +29,13 @@ export const isChain = (name) => {
 }
 
 export const getAddressFromCoords = async (latitude, longitude) => {
-    const response = await fetch(`${REVERSE_GEOCODE_API_URL}?lat=${latitude}&lon=${longitude}&format=json&apiKey=${PLACES_API_KEY}`);
+    const url = new URL(REVERSE_GEOCODE_API_URL);
+    const params = new URLSearchParams({
+        latitude,
+        longitude
+    });
+    url.search = params.toString();
+    const response = await fetch(url.toString());
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
@@ -43,7 +47,12 @@ export const getAddressFromCoords = async (latitude, longitude) => {
 }
 
 export const getCoordsFromAddress = async (address) => {
-    const response = await fetch(`${FORWARD_GEOCODE_API_URL}?text=${address}&filter=countrycode:us&bias=countrycode:us&format=json&apiKey=${PLACES_API_KEY}`);
+    const url = new URL(FORWARD_GEOCODE_API_URL);
+    const params = new URLSearchParams({
+        address
+    });
+    url.search = params.toString();
+    const response = await fetch(url.toString());
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }
@@ -54,10 +63,17 @@ export const getCoordsFromAddress = async (address) => {
     return { latitude: data.results[0].lat, longitude: data.results[0].lon, address: data.results[0].address_line1 };
 }
 
-export const getNearbyPlaces = async (longitude, latitude, maxRadiusMeters, resultsLimit) => {
-    const response = await fetch(
-        `${PLACES_API_URL}?${PLACES_TAGS}&filter=circle:${longitude},${latitude},${maxRadiusMeters}&bias=proximity:${longitude},${latitude}&limit=${resultsLimit}&apiKey=${PLACES_API_KEY}`
-    );
+export const getNearbyPlaces = async (longitude, latitude, radiusMeters, limit) => {
+    const url = new URL(PLACES_API_URL);
+    const params = new URLSearchParams({
+        longitude,
+        latitude,
+        radius: radiusMeters,
+        limit
+    });
+    url.search = params.toString();
+
+    const response = await fetch(url.toString());
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }

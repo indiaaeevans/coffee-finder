@@ -1,3 +1,4 @@
 .DS_Store
 .env
 mocks/
+node_modules
