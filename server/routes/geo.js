@@ -36,8 +36,14 @@ const validate = (schema) => {
 };
 
 router
+  .get('/health', (ctx) => {
+    ctx.body = {
+      status: 'ok',
+      timestamp: new Date().toISOString()
+    };
+  })
   // Reverse geocoding: coordinates → address
-  .get('/reverse', 
+  .get('/reverse',
     validate(coordinatesSchema),
     async (ctx) => {
       const { latitude, longitude } = ctx.query;

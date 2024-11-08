@@ -93,7 +93,7 @@ p {
 
 .page-title,
 .page-description {
-    text-shadow: 1px 1px 0 var(--color-burgundy);
+    text-shadow: 1px 1px 0 var(--color-berry);
     color: var(--color-imperial-red);
 }
 
@@ -386,6 +386,7 @@ input[type="number"] {
     display: none;
     margin: 0 0 12px;
     font-size: 1.25rem;
+    text-shadow: 1px 1px 0 var(--color-fairy-tale);
 }
 
 .results-summary__results-count {
