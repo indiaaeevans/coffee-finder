@@ -34,7 +34,7 @@ app.context.services = {
 app
   .use(cors({
     origin: process.env.NODE_ENV === 'production'
-      ? ['https://your-client-domain.com']
+      ? ['https://coffee-finder-api.onrender.com']
       : '*',
     credentials: true
   }))
