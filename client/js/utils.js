@@ -1,3 +1,5 @@
+import { API_URL } from './config.js';
+
 const CHAINS = [
     'Starbucks',
     'Dunkin',
@@ -6,9 +8,9 @@ const CHAINS = [
     'Caribou Coffee'
 ];
 // map settings
-export const PLACES_API_URL = 'http://localhost:4000/api/v1/geo/places';
-export const REVERSE_GEOCODE_API_URL = 'http://localhost:4000/api/v1/geo/reverse';
-export const FORWARD_GEOCODE_API_URL = 'http://localhost:4000/api/v1/geo/forward';
+export const PLACES_API_URL = `${API_URL}/api/v1/geo/places`;
+export const REVERSE_GEOCODE_API_URL = `${API_URL}/api/v1/geo/reverse`;
+export const FORWARD_GEOCODE_API_URL = `${API_URL}/api/v1/geo/forward`;
 
 export const milesToMeters = (miles) => Math.round(miles * 1609.34);
 export const metersToMiles = (meters) => (meters / 1609.34).toFixed(2);

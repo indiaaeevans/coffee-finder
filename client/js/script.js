@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             padding: [50, 50],
             maxZoom: 15        // Prevent too much zoom
         });
-
+        // TODO add "indie" if chains filtered <span class="results-summary__descriptor">indie</span>
         resultsCountEl.textContent = `Found ${results.length} coffee shop${results.length !== 1 ? 's' : ''}.`;
         resultsListEl.appendChild(ul);
         resultsContainerEl.classList.remove('hidden');

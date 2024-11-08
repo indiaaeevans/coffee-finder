@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-/* @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Zilla+Slab:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 :root {
     --color-imperial-red: #ED4A49;
@@ -34,12 +33,6 @@ main {
     width: 100%;
     display: flex;
     flex-direction: column;
-}
-
-h1 {
-    margin: 0;
-    line-height: 2rem;
-    font-size: 2rem;
 }
 
 a,
@@ -89,10 +82,9 @@ p {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-}
-
-.page-title,
-.page-description {
+    margin: 0;
+    line-height: 2rem;
+    font-size: 2rem;
     text-shadow: 1px 1px 0 var(--color-berry);
     color: var(--color-imperial-red);
 }
@@ -132,7 +124,7 @@ li.chain::before {
     display: block;
     width: 42px;
     height: 42px;
-    background-image: url(./images/skull.svg);
+    background-image: url(/images/skull.svg);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -145,7 +137,7 @@ li.indie::before {
     display: block;
     width: 48px;
     height: 48px;
-    background-image: url(./images/coffee.svg);
+    background-image: url(/images/coffee.svg);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -382,13 +374,6 @@ input[type="number"] {
     align-items: center;
 }
 
-.results-summary__page-title {
-    display: none;
-    margin: 0 0 12px;
-    font-size: 1.25rem;
-    text-shadow: 1px 1px 0 var(--color-fairy-tale);
-}
-
 .results-summary__results-count {
     margin: 0 0 12px;
 }
@@ -412,10 +397,20 @@ input[type="number"] {
     border: solid var(--color-fairy-tale) 2px;
 }
 
+.highlight {
+    color: var(--color-imperial-red);
+    font-weight: bold;
+}
+
+.leaflet-control-attribution, .leaflet-control-attribution a {
+    font-family: "Zilla Slab", serif;
+}
+
 .project-link,
 .bmc-link {
     color: var(--color-fairy-tale);
     font-weight: bold;
+    font-family: "Zilla Slab", serif;
 }
 
 .loading-wrapper {
@@ -442,12 +437,14 @@ input[type="number"] {
 }
 
 @media screen and (max-width: 512px) {
-    .results-summary__page-title {
-        display: block;
-    }
 
     .page-heading {
-        display: none;
+        bottom: 16px;
+        left: 10px;
+        top: unset;
+        right: unset;
+        line-height: 1.5rem;
+        font-size: 1.5rem;
     }
 }
 
