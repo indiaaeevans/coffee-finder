@@ -34,8 +34,7 @@ app.context.services = {
 app
   .use(cors({
     origin: process.env.NODE_ENV === 'production'
-      ? ['https://indiemaps.netlify.app/'] // TODO add client domain
-      : '*',
+      ? [process.env.ALLOWED_ORIGIN] : '*',
     credentials: true
   }))
   .use(logger())
