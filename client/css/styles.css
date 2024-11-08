@@ -70,10 +70,6 @@ button {
     cursor: pointer;
 }
 
-p {
-    margin: 12px 0;
-}
-
 .page-heading {
     position: absolute;
     right: 16px;
@@ -100,7 +96,9 @@ p {
 }
 
 .footer__attribution {
+    margin: 8px 0;
     font-size: .75rem;
+    font-family: 'Zilla Slab', serif;
 }
 
 .distance {
@@ -481,19 +479,3 @@ input[type="number"] {
     animation-name: tada;
     animation-duration: 2s;
 }
-
-@keyframes slideOutLeft {
-    from {
-      transform: translate3d(0, 0, 0);
-    }
-  
-    to {
-      visibility: hidden;
-      transform: translate3d(-100%, 0, 0);
-    }
-  }
-  
-  .slideOutLeft {
-    animation-name: slideOutLeft;
-    animation-duration: 1s;
-  }
