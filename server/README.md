@@ -19,7 +19,7 @@ server/
 │   └── geo.js        # Route definitions
 ├── services/
 │   ├── geocoding.js  # Geocoding service
-│   └── poi.js        # POI service
+│   └── places.js     # POI service
 └── .env              # Environment variables
 
 ## Example usage
