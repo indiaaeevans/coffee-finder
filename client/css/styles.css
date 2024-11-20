@@ -96,12 +96,6 @@ button {
     font-weight: bold;
 }
 
-.footer__attribution {
-    margin: 8px 0;
-    font-size: .75rem;
-    font-family: 'Zilla Slab', serif;
-}
-
 .distance {
     font-size: 1rem;
     color: var(--color-burgundy);
@@ -408,11 +402,21 @@ input[type="number"] {
     font-family: "Zilla Slab", serif;
 }
 
-.project-link,
-.bmc-link {
+.footer__page-links {
+    margin: 8px 0 0;
+}
+
+.footer__page-links a {
     color: var(--color-fairy-tale);
     font-weight: bold;
     font-family: "Zilla Slab", serif;
+    font-size: .75rem;
+}
+
+.footer__page-links a:not(:last-child) {
+    border-right: solid 2px;
+    padding-right: 8px;
+    margin-right: 8px;
 }
 
 .loading-wrapper {
