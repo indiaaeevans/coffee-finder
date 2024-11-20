@@ -35,8 +35,8 @@ A web application to help you find independent (indie) coffee shops near you.
 - Hosted on Render
 
 ## Project Structure
-[client](./client/) - Frontend application
-[server](./server/) - Backend API server
+- [client](./client/) - Frontend application
+- [server](./server/) - Backend / proxy server, handles forwarding requests to third party APIs
 
 ## Getting Started
 

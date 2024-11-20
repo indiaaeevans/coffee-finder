@@ -1,4 +1,4 @@
-# Coffee finder server
+# Indie Maps Server
 
 ## Getting started
 
