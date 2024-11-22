@@ -5,7 +5,8 @@ const CHAINS = [
     'Dunkin',
     'Costa Coffee',
     'Tim Hortons',
-    'Caribou Coffee'
+    'Caribou Coffee',
+    'Peet\'s'
 ];
 // map settings
 export const PLACES_API_URL = `${API_URL}/api/v1/geo/places`;
