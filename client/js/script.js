@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleResultsWrapperEl = document.querySelector('.toggle-results-wrapper');
     const locationErrorMsgEl = document.getElementById('coffee-form__starting-location-err');
     const loadingEl = document.querySelector('.loading-wrapper');
+    const loadingElImg = document.querySelector('.loading-img');
+    const locationIconEl = document.querySelector('.location-icon');
     // leaflet icons
     const locationIcon = L.icon({
         iconUrl: LOCATION_ICON_URL,
@@ -47,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // iconAnchor:   [10, 10], // coordinates of the "tip" of the icon (relative to its top left corner)
         popupAnchor: [0, -16] // coordinates of the point from which the popup should open relative to the iconAnchor
     });
+    let animationIntervalId;
 
     toggleResultsViewEl.addEventListener('click', function () {
         resultsContainerEl.classList.toggle('expanded');
@@ -67,23 +70,29 @@ document.addEventListener('DOMContentLoaded', () => {
     useCurrentLocationBtnEl.addEventListener('click', async () => {
         try {
             hideFormErrorMsg();
+            showLocationLoading();
+            useCurrentLocationBtnEl.setAttribute('disabled', 'true');
             const { latitude, longitude } = await getCurrentLocation();
             const address = await getAddressFromCoords(latitude, longitude);
             startingLocationInputEl.value = address;
+            hideLocationLoading();
             addStartingLocationMarker(latitude, longitude, address);
             // use panTo for less animation
             map.flyTo([latitude, longitude], DEFAULT_ZOOM_LEVEL);
         } catch (error) {
             console.error('Failed to get current location: ', error);
+            hideLocationLoading();
             locationErrorMsgEl.textContent = 'Failed to get current location. Please try again with location services enabled.';
             locationErrorMsgEl.classList.remove('hidden');
+        } finally {
+            useCurrentLocationBtnEl.removeAttribute('disabled');
         }
     });
 
     formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearMap();
-        showLoading();
+        showFullScreenLoading();
 
         const startingLocation = startingLocationInputEl.value;
         let locationData;
@@ -93,12 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching coordinates:', error);
             locationErrorMsgEl.textContent = 'Failed to locate your address. Please try again.';
             locationErrorMsgEl.classList.remove('hidden');
-            hideLoading();
+            hideFullScreenLoading();
             return;
         }
         hideFormErrorMsg();
         const { latitude, longitude, address } = locationData;
-        addStartingLocationMarker(latitude, longitude, address); // TODO update map to new location
+        addStartingLocationMarker(latitude, longitude, address);
 
         const maxRadiusMiles = maxRadiusInputEl.value;
         const maxRadiusMeters = milesToMeters(maxRadiusMiles);
@@ -123,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // TODO show error msg on the page
             console.error('Error fetching nearby places:', error);
         } finally {
-            hideLoading();
+            hideFullScreenLoading();
         }
     });
 
@@ -142,12 +151,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function showLoading() {
+    function showFullScreenLoading() {
+        loadingElImg.classList.add('tada');
+        // gives the effect of pausing the animation between iterations
+        animationIntervalId = setInterval(() => {
+            loadingElImg.classList.toggle('tada');
+        }, 2000);
         loadingEl.classList.remove('hidden');
     }
 
-    function hideLoading() {
+    function hideFullScreenLoading() {
+        clearInterval(animationIntervalId);
         loadingEl.classList.add('hidden');
+    }
+
+    function showLocationLoading() {
+        locationIconEl.classList.add('tada');
+    }
+
+    function hideLocationLoading() {
+        locationIconEl.classList.remove('tada');
     }
 
     function hideFormErrorMsg() {
@@ -192,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initializeMapWithCurrentLocation() {
         try {
-            showLoading();
+            showFullScreenLoading();
             const { latitude, longitude } = await getCurrentLocation();
             initializeMap(latitude, longitude);
         } catch (error) {
@@ -200,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.info('Setting map to default location.');
             initializeMap();
         } finally {
-            hideLoading();
+            hideFullScreenLoading(); // TODO don't show map until tiles completely loaded
         }
     };
 

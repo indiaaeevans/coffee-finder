@@ -486,4 +486,9 @@ input[type="number"] {
 .tada {
     animation-name: tada;
     animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.location-icon {
+    animation-delay: 1s;
 }
