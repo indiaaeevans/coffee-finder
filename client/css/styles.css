@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Zilla+Slab:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
-
 :root {
     --color-imperial-red: #ED4A49;
     --color-magenta-haze: #9C3C7C;
@@ -11,7 +9,7 @@
 
 * {
     box-sizing: border-box;
-    font-family: Montserrat, Sans serif;
+    font-family: Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
 }
 
 html,
@@ -398,18 +396,23 @@ input[type="number"] {
     font-weight: bold;
 }
 
-.leaflet-control-attribution, .leaflet-control-attribution a {
-    font-family: "Zilla Slab", serif;
+.leaflet-control-attribution,
+.leaflet-control-attribution a {
+    font-family: "Zilla Slab", Georgia, 'Times New Roman', Times, serif;
 }
 
 .footer__page-links {
     margin: 8px 0 0;
+    /* extra whitespace was being added between the children without this... */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
 }
 
 .footer__page-links a {
     color: var(--color-fairy-tale);
     font-weight: bold;
-    font-family: "Zilla Slab", serif;
+    font-family: "Zilla Slab", Georgia, 'Times New Roman', Times, serif;
     font-size: .75rem;
 }
 

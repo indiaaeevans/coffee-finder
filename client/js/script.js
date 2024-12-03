@@ -11,7 +11,9 @@ const DEFAULT_ZOOM_LEVEL = 12; // TODO adjust zoom level based on radius
 const TILE_LAYER_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const MAP_ATTRIBUTION = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 // state
-let map, circle;
+let animationIntervalId;
+let map, tileLayer, circle;
+let tilesLoaded = false;
 let resultsLimit = 20; // TODO user input for # of results
 let startingLocationMarker, mapMarkers;
 
@@ -49,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // iconAnchor:   [10, 10], // coordinates of the "tip" of the icon (relative to its top left corner)
         popupAnchor: [0, -16] // coordinates of the point from which the popup should open relative to the iconAnchor
     });
-    let animationIntervalId;
+
+    initializeMapWithCurrentLocation();
 
     toggleResultsViewEl.addEventListener('click', function () {
         resultsContainerEl.classList.toggle('expanded');
@@ -136,9 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    initializeMapWithCurrentLocation();
-
-
     function checkResultsOverflow() {
         // if expanded view was left on, don't check for overflow
         if (resultsContainerEl.classList.contains('expanded')) {
@@ -188,13 +188,16 @@ document.addEventListener('DOMContentLoaded', () => {
             position: 'bottomright'
         }).addTo(map);
         // add map tiles
-        L.tileLayer(TILE_LAYER_URL, {
+        tileLayer = L.tileLayer(TILE_LAYER_URL, {
             maxZoom: 19,
             attribution: MAP_ATTRIBUTION
         }).addTo(map);
         // init layer group for map markers
         mapMarkers = L.layerGroup([]);
-
+        // hide loading indicator after tiles complete loading // TODO handle with async/await
+        tileLayer.on('load', () => {
+            hideFullScreenLoading();
+        });
         // create a custom leaflet control for the search form element
         L.Control.CustomControl = L.Control.extend({
             onAdd: function (map) {
@@ -222,8 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to get current location: ', error);
             console.info('Setting map to default location.');
             initializeMap();
-        } finally {
-            hideFullScreenLoading(); // TODO don't show map until tiles completely loaded
         }
     };
 
@@ -282,8 +283,10 @@ document.addEventListener('DOMContentLoaded', () => {
             li.appendChild(span);
             ul.appendChild(li);
             // create marker for each result
-            let marker = L.marker(
-                [feature.properties.lat, feature.properties.lon], { icon: isIndie ? indieIcon : chainIcon }
+            const latlng = L.latLng(feature.properties.lat, feature.properties.lon);
+            const marker = L.marker(
+                latlng,
+                { icon: isIndie ? indieIcon : chainIcon }
             );
             // add popup to each marker
             const popupContent = document.createElement('div');
@@ -298,21 +301,28 @@ document.addEventListener('DOMContentLoaded', () => {
             marker.bindPopup(popupContent);
             mapMarkers.addLayer(marker);
         });
+
         mapMarkers.addTo(map);
-        // adjust the map to fit all the markers
-        let bounds = mapMarkers.getLayers().map((marker) => {
-            return marker.getLatLng();
-        }).map((latlng) => [latlng.lat, latlng.lng]);
-        // use fitBounds instead for no animation
-        map.flyToBounds(bounds, {
-            padding: [50, 50],
-            maxZoom: 15
-        });
+
         // TODO add "indie" if chains filtered <span class="results-summary__descriptor">indie</span>
         resultsCountEl.textContent = `Found ${results.length} coffee shop${results.length !== 1 ? 's' : ''}.`;
         resultsListEl.appendChild(ul);
         resultsContainerEl.classList.remove('hidden');
         checkResultsOverflow();
+        // to update the map after changing its size dynamically
+        map.invalidateSize();
+        // fit the map bounds to the markers
+        let bounds = mapMarkers.getLayers().map(marker => {
+            const { lat, lng } = marker.getLatLng();
+            return [lat, lng];
+        });
+
+        // TBD use fitBounds instead for no animation
+        map.flyToBounds(bounds, {
+            padding: [50, 50],
+            maxZoom: 15,
+            animate: true
+        });
     }
 
     async function getCurrentLocation() {
