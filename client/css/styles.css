@@ -16,6 +16,7 @@ html,
 body {
     height: 100%;
     margin: 0;
+    font-size: 16px;
 }
 
 body {
@@ -80,8 +81,7 @@ button {
     margin: 0;
     line-height: 2rem;
     font-size: 2rem;
-    text-shadow: 1px 1px 0 var(--color-berry);
-    color: var(--color-imperial-red);
+    color: var(--color-burgundy);
 }
 
 .footer__page-heading {
@@ -126,8 +126,8 @@ li.indie::before {
     content: '';
     margin-right: 1rem;
     display: block;
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
     background-image: url(/images/coffee.svg);
     background-size: contain;
     background-repeat: no-repeat;
@@ -198,18 +198,19 @@ input[type="text"],
 input[type="number"] {
     width: 100%;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.75);
-    border: 1px solid var(--color-burgundy);
+    border: 2px solid var(--color-burgundy);
     border-radius: 6px;
     font-size: 1rem;
     margin: 0;
-    height: 34px;
+    padding-inline: 6px;
+    padding-block: 6px;
     background-color: var(--color-lavender);
 }
 
 #coffee-form__starting-location-err {
     color: var(--color-imperial-red);
     font-weight: bold;
-    font-size: 12px;
+    font-size: .75rem;
     background: rgb(256, 256, 256, .85);
     border-radius: 6px;
     padding: 12px;
@@ -217,8 +218,8 @@ input[type="number"] {
 }
 
 .icon-button {
-    width: 34px;
-    height: 34px;
+    width: 35px;
+    height: 35px;
     border-radius: 6px;
     border: none;
     border: solid 2px var(--color-burgundy);
@@ -261,6 +262,8 @@ input[type="number"] {
     display: flex;
     gap: 12px;
     margin-bottom: 4px;
+    justify-content: flex-start;
+    align-items: stretch;
 }
 
 .switch {
@@ -344,18 +347,20 @@ input[type="number"] {
 
 .toggle-results {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    background-color: var(--color-berry);
-    color: var(--color-lavender);
+    background-color: var(--color-lavender);
+    color: var(--color-burgundy);
     border: none;
     padding: 10px 15px;
     border-radius: 6px;
     width: fit-content;
     border: 2px solid var(--color-burgundy);
+    font-weight: 500;
+    font-size: .875rem;
 }
 
 .toggle-results:hover {
     background-color: var(--color-magenta-haze);
-    /* color: var(--color-fairy-tale); */
+    color: var(--color-lavender);
 }
 
 .results-summary {
@@ -411,7 +416,6 @@ input[type="number"] {
 
 .footer__page-links a {
     color: var(--color-fairy-tale);
-    font-weight: bold;
     font-family: "Zilla Slab", Georgia, 'Times New Roman', Times, serif;
     font-size: .75rem;
 }
@@ -446,7 +450,19 @@ input[type="number"] {
 }
 
 @media screen and (max-width: 512px) {
-
+    li {
+        font-size: 1rem;
+    }
+    .results-summary__results-count {
+        font-size: .75rem;
+    }
+    .distance {
+        font-size: .75rem;
+    }
+    li.indie::before {
+        width: 2rem;
+        height: 2rem;
+    }
     .page-heading {
         bottom: 16px;
         left: 10px;
