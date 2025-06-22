@@ -4,6 +4,8 @@ A web application to help you find independent (indie) coffee shops near you.
 
 [View the site live](https://indiemaps.netlify.app/)
 
+* Please note, the backend server has a cold start (but it's free!), so the first search may be slow to respond.
+
 ## Features
 
 ### Current features
