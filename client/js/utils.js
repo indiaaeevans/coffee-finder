@@ -12,6 +12,7 @@ const CHAINS = [
 export const PLACES_API_URL = `${API_URL}/api/v1/geo/places`;
 export const REVERSE_GEOCODE_API_URL = `${API_URL}/api/v1/geo/reverse`;
 export const FORWARD_GEOCODE_API_URL = `${API_URL}/api/v1/geo/forward`;
+export const AUTOCOMPLETE_API_URL = `${API_URL}/api/v1/geo/autocomplete`;
 
 export const milesToMeters = (miles) => Math.round(miles * 1609.34);
 export const metersToMiles = (meters) => (meters / 1609.34).toFixed(2);
@@ -29,6 +30,22 @@ export const throttle = (func, limit) => {
 
 export const isChain = (name) => {
     return CHAINS.some(chain => name.toLowerCase().includes(chain.toLowerCase()));
+}
+
+export const getAutocompleteResults = async (latitude, longitude, query) => {
+    const url = new URL(AUTOCOMPLETE_API_URL);
+    const params = new URLSearchParams({
+        latitude,
+        longitude,
+        query
+    });
+    url.search = params.toString();
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data.results;
 }
 
 export const getAddressFromCoords = async (latitude, longitude) => {

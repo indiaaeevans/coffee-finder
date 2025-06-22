@@ -4,3 +4,4 @@ mocks/
 node_modules
 npm-debug.log*
 dist/
+.vscode/

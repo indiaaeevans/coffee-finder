@@ -42,6 +42,24 @@ router
       timestamp: new Date().toISOString()
     };
   })
+
+  // Autocomplete for address search
+  .get('/autocomplete',
+    validate(Joi.object({
+      latitude: Joi.number().min(-90).max(90).required(),
+      longitude: Joi.number().min(-180).max(180).required(),
+      query: Joi.string().required()
+    })),
+    async (ctx) => {
+      const { latitude, longitude, query } = ctx.query;
+      try {
+        ctx.body = await ctx.services.autocomplete.autocomplete(latitude, longitude, query);
+      } catch (error) {
+        ctx.status = error.cause ? error.cause.status : 500;
+        ctx.body = { error: error.message };
+      }
+    }
+  )
   // Reverse geocoding: coordinates → address
   .get('/reverse',
     validate(coordinatesSchema),

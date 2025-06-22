@@ -17,7 +17,8 @@ A web application to help you find independent (indie) coffee shops near you.
 
 ### Feature wishlist
 
-- [ ] Autocomplete starting location
+- [x] Autocomplete starting location
+- [ ] Set search params in url
 - [ ] Customize which chains get filtered out
 - [ ] New categories (e.g. boba)
 - [ ] View more details about a result (e.g. hours, amenities, menu)

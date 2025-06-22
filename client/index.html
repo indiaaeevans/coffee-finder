@@ -24,8 +24,13 @@
             <h1 class="page-heading">indie<br>maps</h1>
             <form id="coffee-form" class="coffee-form">
                 <div class="form-row">
-                    <input type="text" id="coffee-form__starting-location" name="startingLocation"
-                        placeholder="Starting location" required>
+                    <div>
+                        <input type="text" id="coffee-form__starting-location" name="startingLocation"
+                            placeholder="Starting location" required>
+                        <ul id="autocomplete-results">
+
+                        </ul>
+                    </div>
                     <button type="button" class="icon-button" id="coffee-form__use-current-location"
                         aria-label="Use my location" title="Use my location">
                         <img class="icon location-icon" src="/images/location.svg" aria-hidden="true">

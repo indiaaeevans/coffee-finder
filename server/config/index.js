@@ -11,7 +11,8 @@ const config = {
     urls: {
       reverseGeocode: process.env.REVERSE_GEOCODE_API_URL,
       forwardGeocode: process.env.FORWARD_GEOCODE_API_URL,
-      places: process.env.PLACES_API_URL
+      places: process.env.PLACES_API_URL,
+      autocomplete: process.env.AUTOCOMPLETE_API_URL
     },
     places: {
       tags: process.env.PLACES_TAGS,

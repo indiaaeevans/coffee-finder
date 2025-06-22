@@ -70,6 +70,30 @@ button {
     cursor: pointer;
 }
 
+#autocomplete-results {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background-color: var(--color-lavender);
+}
+
+.autocomplete-result {
+    font-size: 1rem;
+    width: 20ch;
+    padding: 4px;
+    background-color: var(--color-lavender);
+}
+
+.autocomplete-result:nth-child(odd) {
+    /* slightly lighter color */
+    background-color: rgb(from var(--color-lavender) calc(r * 0.9) calc(g * 0.9) calc(b * 0.9));
+}
+
+.autocomplete-result:nth-child(n):hover {
+    background-color: var(--color-magenta-haze);
+    color: var(--color-lavender);
+}
+
 .page-heading {
     position: absolute;
     right: 16px;

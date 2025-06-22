@@ -1,4 +1,4 @@
-import { getAddressFromCoords, getCoordsFromAddress, getNearbyPlaces, milesToMeters, metersToMiles, throttle } from './utils.js';
+import { getAddressFromCoords, getCoordsFromAddress, getNearbyPlaces, milesToMeters, metersToMiles, throttle, getAutocompleteResults } from './utils.js';
 import LOCATION_ICON_URL from '../images/location.svg'
 import CHAIN_ICON_URL from '../images/skull.svg';
 import INDIE_ICON_URL from '../images/coffee.svg';
@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingEl = document.querySelector('.loading-wrapper');
     const loadingElImg = document.querySelector('.loading-img');
     const locationIconEl = document.querySelector('.location-icon');
+    const autocompleteResultsEl = document.querySelector('#autocomplete-results');
+
     // leaflet icons
     const locationIcon = L.icon({
         iconUrl: LOCATION_ICON_URL,
@@ -54,6 +56,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeMapWithCurrentLocation();
 
+    // TODO debounce
+    startingLocationInputEl.addEventListener('input', async (e) => {
+        // prevent autocomplete from being triggered when use current location is clicked
+        if (document.activeElement.id !== startingLocationInputEl.id) { 
+            return;
+        }   
+        autocompleteResultsEl.innerHTML = '';
+        const q = e.target.value;
+        // used for proximity bias
+        const { latitude, longitude } = await getCurrentLocation();
+        const results = await getAutocompleteResults(latitude, longitude, q);
+        // display results under the input
+        results.forEach((result) => {
+            const li = document.createElement('li');
+            li.classList.add('autocomplete-result');
+            li.textContent = result.formatted;
+            autocompleteResultsEl.appendChild(li);
+            li.addEventListener('click', () => {
+                startingLocationInputEl.value = result.formatted;
+                startingLocationInputEl.setAttribute('data-latitude', result.lat);
+                startingLocationInputEl.setAttribute('data-longitude', result.lon);
+                autocompleteResultsEl.innerHTML = '';
+            });
+        });
+    });
+
     toggleResultsViewEl.addEventListener('click', function () {
         resultsContainerEl.classList.toggle('expanded');
         if (resultsContainerEl.classList.contains('expanded')) {
@@ -71,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     useCurrentLocationBtnEl.addEventListener('click', async () => {
+        autocompleteResultsEl.innerHTML = '';
         try {
             hideFormErrorMsg();
             showLocationLoading();
@@ -96,20 +125,28 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         clearMap();
         showFullScreenLoading();
-
-        const startingLocation = startingLocationInputEl.value;
-        let locationData;
-        try {
-            locationData = await getCoordsFromAddress(startingLocation);
-        } catch (error) {
-            console.error('Error fetching coordinates:', error);
-            locationErrorMsgEl.textContent = 'Failed to locate your address. Please try again.';
-            locationErrorMsgEl.classList.remove('hidden');
-            hideFullScreenLoading();
-            return;
+        let latitude, longitude, address;
+        // if they used autocomplete, use the lat/long from the data attributes
+        if (startingLocationInputEl.hasAttribute('data-latitude') && startingLocationInputEl.hasAttribute('data-longitude')) {
+            latitude = startingLocationInputEl.getAttribute('data-latitude');
+            longitude = startingLocationInputEl.getAttribute('data-longitude');
+            address = startingLocationInputEl.value;
+        } else {
+            let locationData;
+            try {
+                locationData = await getCoordsFromAddress(startingLocationInputEl.value);
+            } catch (error) {
+                console.error('Error fetching coordinates:', error);
+                locationErrorMsgEl.textContent = 'Failed to locate your address. Please try again.';
+                locationErrorMsgEl.classList.remove('hidden');
+                hideFullScreenLoading();
+                return;
+            }
+            hideFormErrorMsg();
+            latitude = locationData.latitude;
+            longitude = locationData.longitude;
+            address = locationData.address;
         }
-        hideFormErrorMsg();
-        const { latitude, longitude, address } = locationData;
         addStartingLocationMarker(latitude, longitude, address);
 
         const maxRadiusMiles = maxRadiusInputEl.value;
@@ -252,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResults(results, maxRadiusMiles) {
+        // TODO pan to starting location marker when no results
         if (results.length === 0) {
             resultsCountEl.textContent = `No coffee shops found within ${maxRadiusMiles} ${maxRadiusMiles > 1 ? 'miles' : 'mile'}.`;
             resultsContainerEl.classList.remove('hidden');
