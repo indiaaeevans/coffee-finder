@@ -20,7 +20,6 @@ class AutocompleteService {
           apiKey: this.apiKey
         }
       });
-      console.log('response', response);
       return response.data;
     } catch (error) {
       throw this.handleError(error);

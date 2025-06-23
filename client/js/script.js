@@ -56,12 +56,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeMapWithCurrentLocation();
 
-    // TODO debounce
+    function debounce(func, delay) {
+        let timeoutId;
+        return function () {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+    const debouncedOnStartingLocationInputChange = debounce(onStartingLocationInputChange, 300);
+
+    // TODO escape clears the autocomplete results
+    // TODO should be able to keyboard navigate the autocomplete results
     startingLocationInputEl.addEventListener('input', async (e) => {
         // prevent autocomplete from being triggered when use current location is clicked
-        if (document.activeElement.id !== startingLocationInputEl.id) { 
+        if (document.activeElement.id !== startingLocationInputEl.id) {
             return;
-        }   
+        }
+        await debouncedOnStartingLocationInputChange(e);
+
+    });
+
+    async function onStartingLocationInputChange(e) {
         autocompleteResultsEl.innerHTML = '';
         const q = e.target.value;
         // used for proximity bias
@@ -80,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 autocompleteResultsEl.innerHTML = '';
             });
         });
-    });
+    }
 
     toggleResultsViewEl.addEventListener('click', function () {
         resultsContainerEl.classList.toggle('expanded');
